@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="tamash-selenium HRM examples (TestNG)" verbose="1">
+
+  <!-- No <listeners> block: TamashSeleniumTestNgListener auto-registers via ServiceLoader. -->
+
+  <test name="All examples">
+    <classes>
+      <class name="com.vibetestq.hrm.testng.LoginTest"/>
+      <class name="com.vibetestq.hrm.testng.AddEmployeePomTest"/>
+      <class name="com.vibetestq.hrm.testng.AddEmployeeFactoryTest"/>
+      <class name="com.vibetestq.hrm.testng.DataDrivenLoginTest"/>
+      <class name="com.vibetestq.hrm.testng.KeywordDrivenTest"/>
+      <class name="com.vibetestq.hrm.testng.SelfHealingDemoTest"/>
+    </classes>
+  </test>
+</suite>

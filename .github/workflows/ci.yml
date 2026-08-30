@@ -1,0 +1,110 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    # The tests run against a live OrangeHRM instance — a weekly run catches app drift
+    # (and shows self-healing doing its job when a locator moves).
+    - cron: "0 6 * * 1"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ---- Rule-based provider: no secrets, always runnable ----------------------
+  tamash:
+    name: ${{ matrix.suite.name }} (tamash provider)
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        suite:
+          - { name: "JUnit 5 + Cucumber", cmd: "mvn -B test" }
+          - { name: "TestNG",             cmd: "mvn -B test -Ptestng" }
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 25
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "25"
+          cache: maven
+
+      - name: Set up Chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+
+      - name: Test
+        run: >-
+          ${{ matrix.suite.cmd }}
+          -Dheadless=true
+          -Dtamash.provider=tamash
+          -Dsurefire.rerunFailingTestsCount=2
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-${{ strategy.job-index }}
+          path: target/surefire-reports/
+          if-no-files-found: ignore
+
+  # ---- AI providers: only run when the matching secret is configured --------
+  ai-providers:
+    name: Self-healing demo (${{ matrix.provider }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        provider: [openai, anthropic, gemini]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check secret
+        id: gate
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          case "${{ matrix.provider }}" in
+            openai)    [ -n "$OPENAI_API_KEY" ]    && echo "run=true" >> "$GITHUB_OUTPUT" ;;
+            anthropic) [ -n "$ANTHROPIC_API_KEY" ] && echo "run=true" >> "$GITHUB_OUTPUT" ;;
+            gemini)    [ -n "$GEMINI_API_KEY" ]    && echo "run=true" >> "$GITHUB_OUTPUT" ;;
+          esac
+          echo "${{ matrix.provider }}: run=$(grep -c run= "$GITHUB_OUTPUT" || true)"
+
+      - name: Set up JDK 25
+        if: steps.gate.outputs.run == 'true'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "25"
+          cache: maven
+
+      - name: Set up Chrome
+        if: steps.gate.outputs.run == 'true'
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+
+      - name: Heal the broken-locator demo via ${{ matrix.provider }}
+        if: steps.gate.outputs.run == 'true'
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL: ${{ vars.OPENAI_MODEL || 'gpt-4o-mini' }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ANTHROPIC_MODEL: ${{ vars.ANTHROPIC_MODEL || 'claude-haiku-4-5' }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: ${{ vars.GEMINI_MODEL || 'gemini-3.6-flash' }}
+        run: >-
+          mvn -B test -Dtest=SelfHealingDemoTest
+          -Dheadless=true
+          -Dtamash.provider=${{ matrix.provider }}
+          -Dsurefire.rerunFailingTestsCount=2

@@ -1,0 +1,6 @@
+target/
+.tamash-selenium/
+.env
+*.iml
+.idea/
+.vscode/

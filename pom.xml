@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.vibetestq.hrm</groupId>
+  <artifactId>tamash-selenium-java-sample</artifactId>
+  <version>1.0.0</version>
+  <packaging>jar</packaging>
+
+  <name>tamash-selenium-java-sample</name>
+  <description>
+    Worked examples of tamash-selenium (self-healing Selenium Java) in every common test style —
+    JUnit 5, TestNG, Cucumber BDD; Page Object Model and PageFactory/@FindBy; data-driven,
+    keyword-driven, and deliberately-broken-locator self-healing demos — against the live OrangeHRM
+    instance at https://qtpsudhakar-vibetestq-hrm.up.railway.app/
+
+    Single module on purpose: tamash-selenium recovers a locator's human description by reading the
+    Page Object source file relative to the test's working directory, so pages and tests live in one
+    source tree. JUnit 5 + Cucumber run on `mvn test`; TestNG runs on `mvn test -Ptestng`.
+  </description>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <!-- tamash-selenium ships Java 25 bytecode, so the *runtime* JDK must be 25+. Compile to match. -->
+    <maven.compiler.release>25</maven.compiler.release>
+
+    <tamash-selenium.version>0.1.0-beta.1</tamash-selenium.version>
+    <selenium.version>4.27.0</selenium.version>
+    <junit.version>6.1.3</junit.version>
+    <testng.version>7.11.0</testng.version>
+    <cucumber.version>7.20.1</cucumber.version>
+    <surefire.version>3.5.2</surefire.version>
+
+    <!-- App under test — override with -Dhrm.baseUrl / -Dhrm.username / -Dhrm.password
+         or the matching HRM_BASE_URL / HRM_USERNAME / HRM_PASSWORD environment variables. -->
+    <hrm.baseUrl>https://qtpsudhakar-vibetestq-hrm.up.railway.app/</hrm.baseUrl>
+    <hrm.username>testadmin</hrm.username>
+    <hrm.password>Vibetestq@123#</hrm.password>
+
+    <!-- tamash / browser knobs, forwarded into the test JVM by surefire below. -->
+    <tamash.provider>tamash</tamash.provider>
+    <tamash.browser>chrome</tamash.browser>
+    <headless>true</headless>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>io.github.qtpsudhakarproducts</groupId>
+      <artifactId>tamash-selenium</artifactId>
+      <version>${tamash-selenium.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-java</artifactId>
+      <version>${selenium.version}</version>
+    </dependency>
+
+    <!-- Needed only for HEALER_PROVIDER=copilot-subscription (tamash-selenium declares it
+         <optional>, so it isn't pulled in transitively). Requires the `copilot` CLI installed
+         and signed in. Drop this if you don't use that provider. -->
+    <dependency>
+      <groupId>com.github</groupId>
+      <artifactId>copilot-sdk-java</artifactId>
+      <version>1.0.13-preview.2</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- JUnit 5 / 6 (matches the version tamash-selenium exposes as junit-jupiter-api). -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.platform</groupId>
+      <artifactId>junit-platform-launcher</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- TestNG (its tests run only under -Ptestng, see the profile below). -->
+    <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <version>${testng.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- Cucumber on the JUnit Platform. -->
+    <dependency>
+      <groupId>io.cucumber</groupId>
+      <artifactId>cucumber-java</artifactId>
+      <version>${cucumber.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.cucumber</groupId>
+      <artifactId>cucumber-junit-platform-engine</artifactId>
+      <version>${cucumber.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.platform</groupId>
+      <artifactId>junit-platform-suite</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.13.0</version>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>${surefire.version}</version>
+        <configuration>
+          <failIfNoTests>false</failIfNoTests>
+          <!-- Default run: JUnit Platform → the junit5.* tests and the Cucumber runner.
+               The testng.* package is skipped here (it needs the TestNG provider — see -Ptestng). -->
+          <excludes>
+            <exclude>**/testng/**</exclude>
+          </excludes>
+          <systemPropertyVariables>
+            <hrm.baseUrl>${hrm.baseUrl}</hrm.baseUrl>
+            <hrm.username>${hrm.username}</hrm.username>
+            <hrm.password>${hrm.password}</hrm.password>
+            <HEALER_PROVIDER>${tamash.provider}</HEALER_PROVIDER>
+            <TAMASH_BROWSER>${tamash.browser}</TAMASH_BROWSER>
+            <HEADLESS>${headless}</HEADLESS>
+          </systemPropertyVariables>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>3.5.0</version>
+        <!-- tamash-selenium CLIs, e.g.  mvn exec:java -Dexec.args="doctor" -->
+        <configuration>
+          <mainClass>io.github.qtpsudhakarproducts.tamash.cli.Main</mainClass>
+          <classpathScope>test</classpathScope>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <!-- `mvn test -Ptestng` — forces the TestNG Surefire provider and runs src/test/resources/testng.xml.
+         The JUnit Platform tests are skipped in this mode (the TestNG provider doesn't see them). -->
+    <profile>
+      <id>testng</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>${surefire.version}</version>
+            <dependencies>
+              <dependency>
+                <groupId>org.apache.maven.surefire</groupId>
+                <artifactId>surefire-testng</artifactId>
+                <version>${surefire.version}</version>
+              </dependency>
+            </dependencies>
+            <configuration>
+              <excludes combine.self="override"/>
+              <suiteXmlFiles>
+                <suiteXmlFile>src/test/resources/testng.xml</suiteXmlFile>
+              </suiteXmlFiles>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+</project>
