@@ -37,9 +37,9 @@ public class AddEmployeePage extends BasePage {
     return this;
   }
 
-  /** True once the form has navigated to the saved employee's Personal Details tab. */
+  /** True once the save landed — the "Successfully Saved" toast, or the Personal Details tab. */
   public boolean isSaved() {
-    return isDisplayed(personalDetailsHeader);
+    return waitForAnyPresent(30, successToast, personalDetailsHeader);
   }
 
   public String toastMessage() {

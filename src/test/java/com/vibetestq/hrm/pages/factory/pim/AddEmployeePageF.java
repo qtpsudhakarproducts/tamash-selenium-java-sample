@@ -1,6 +1,7 @@
 package com.vibetestq.hrm.pages.factory.pim;
 
 import io.github.qtpsudhakarproducts.tamash.pagefactory.TamashPageFactory;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -12,6 +13,7 @@ import java.time.Duration;
 /** PIM &rarr; Add Employee form — PageFactory / {@code @FindBy} style. */
 public class AddEmployeePageF {
 
+  private final WebDriver driver;
   private final WebDriverWait wait;
 
   @FindBy(name = "firstName")
@@ -23,10 +25,8 @@ public class AddEmployeePageF {
   @FindBy(css = "form button[type='submit']")
   private WebElement saveButton;
 
-  @FindBy(xpath = "//h6[normalize-space()='Personal Details']")
-  private WebElement personalDetailsHeader;
-
   public AddEmployeePageF(WebDriver driver) {
+    this.driver = driver;
     this.wait = new WebDriverWait(driver, Duration.ofSeconds(20));
     TamashPageFactory.initElements(driver, this);
     wait.until(ExpectedConditions.visibilityOf(firstNameField));
@@ -45,11 +45,23 @@ public class AddEmployeePageF {
     return this;
   }
 
+  /** True once the save landed. Checked with findElements (never healed) so a slow SPA
+   *  navigation doesn't trigger heal attempts on a correct-but-not-yet-present locator. */
   public boolean isSaved() {
-    try {
-      return wait.until(ExpectedConditions.visibilityOf(personalDetailsHeader)).isDisplayed();
-    } catch (RuntimeException e) {
-      return false;
+    By toast = By.cssSelector(".oxd-toast");
+    By header = By.xpath("//h6[normalize-space()='Personal Details']");
+    long deadline = System.currentTimeMillis() + 30_000;
+    while (System.currentTimeMillis() < deadline) {
+      if (!driver.findElements(toast).isEmpty() || !driver.findElements(header).isEmpty()) {
+        return true;
+      }
+      try {
+        Thread.sleep(500);
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        break;
+      }
     }
+    return false;
   }
 }

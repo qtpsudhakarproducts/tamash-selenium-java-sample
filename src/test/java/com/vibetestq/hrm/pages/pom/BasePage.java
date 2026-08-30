@@ -48,4 +48,27 @@ public abstract class BasePage {
       return false;
     }
   }
+
+  /**
+   * Poll (up to {@code seconds}) for any of these locators to be present, using
+   * {@code driver.findElements} — which tamash-selenium never heals. Use this to confirm an
+   * outcome on a slow SPA transition without a missing element triggering heal attempts.
+   */
+  protected boolean waitForAnyPresent(int seconds, By... locators) {
+    long deadline = System.currentTimeMillis() + seconds * 1000L;
+    while (System.currentTimeMillis() < deadline) {
+      for (By by : locators) {
+        if (!driver.findElements(by).isEmpty()) {
+          return true;
+        }
+      }
+      try {
+        Thread.sleep(500);
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        break;
+      }
+    }
+    return false;
+  }
 }

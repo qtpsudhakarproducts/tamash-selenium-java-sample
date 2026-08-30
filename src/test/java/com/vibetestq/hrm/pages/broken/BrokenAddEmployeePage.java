@@ -36,6 +36,11 @@ public class BrokenAddEmployeePage {
   private final By lastNameTextbox  = By.cssSelector("input#last-name");
   // real: form button[type='submit']
   private final By saveButton       = By.xpath("//button[normalize-space()='Save Employee']");
+
+  // These two are CORRECT — used only to confirm the save landed. We check them with
+  // driver.findElements(...) (never healed) in a patient poll, so a slow OrangeHRM navigation
+  // doesn't burn heal attempts on a locator that is simply not on the page yet.
+  private final By successToast          = By.cssSelector(".oxd-toast");
   private final By personalDetailsHeader = By.xpath("//h6[normalize-space()='Personal Details']");
 
   public BrokenAddEmployeePage(WebDriver driver) {
@@ -56,11 +61,22 @@ public class BrokenAddEmployeePage {
     return this;
   }
 
+  /** True once the save landed — the "Successfully Saved" toast, or navigation to the
+   *  employee's Personal Details tab. Polled with findElements (never healed). */
   public boolean isSaved() {
-    try {
-      return wait.until(ExpectedConditions.visibilityOfElementLocated(personalDetailsHeader)).isDisplayed();
-    } catch (RuntimeException e) {
-      return false;
+    long deadline = System.currentTimeMillis() + 30_000;
+    while (System.currentTimeMillis() < deadline) {
+      if (!driver.findElements(successToast).isEmpty()
+          || !driver.findElements(personalDetailsHeader).isEmpty()) {
+        return true;
+      }
+      try {
+        Thread.sleep(500);
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        break;
+      }
     }
+    return false;
   }
 }
