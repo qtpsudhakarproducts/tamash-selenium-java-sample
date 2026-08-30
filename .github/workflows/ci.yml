@@ -15,9 +15,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # ---- Rule-based provider: no secrets, always runnable ----------------------
+  # ---- The gate: rule-based provider, no secrets, always runnable -----------
   tamash:
-    name: ${{ matrix.suite.name }} (tamash provider)
+    name: ${{ matrix.suite.name }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -26,17 +26,17 @@ jobs:
           - { name: "JUnit 5 + Cucumber", cmd: "mvn -B test" }
           - { name: "TestNG",             cmd: "mvn -B test -Ptestng" }
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up JDK 25
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "25"
           cache: maven
 
       - name: Set up Chrome
-        uses: browser-actions/setup-chrome@v1
+        uses: browser-actions/setup-chrome@v2
         with:
           chrome-version: stable
 
@@ -55,18 +55,22 @@ jobs:
           path: target/surefire-reports/
           if-no-files-found: ignore
 
-  # ---- AI providers: only run when the matching secret is configured --------
+  # ---- AI providers: informational (continue-on-error) ---------------------
+  # Runs the broken-locator demo through each provider whose API key is configured
+  # as a repo/org secret. A red square here usually means the provider rate-limited
+  # or a live-app hiccup, not a regression — the `tamash` job above is the real gate.
   ai-providers:
-    name: Self-healing demo (${{ matrix.provider }})
+    name: Heal demo (${{ matrix.provider }})
     runs-on: ubuntu-latest
+    continue-on-error: true
     strategy:
       fail-fast: false
       matrix:
         provider: [openai, anthropic, gemini]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - name: Check secret
+      - name: Check for API key
         id: gate
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
@@ -74,15 +78,16 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           case "${{ matrix.provider }}" in
-            openai)    [ -n "$OPENAI_API_KEY" ]    && echo "run=true" >> "$GITHUB_OUTPUT" ;;
-            anthropic) [ -n "$ANTHROPIC_API_KEY" ] && echo "run=true" >> "$GITHUB_OUTPUT" ;;
-            gemini)    [ -n "$GEMINI_API_KEY" ]    && echo "run=true" >> "$GITHUB_OUTPUT" ;;
+            openai)    key="$OPENAI_API_KEY" ;;
+            anthropic) key="$ANTHROPIC_API_KEY" ;;
+            gemini)    key="$GEMINI_API_KEY" ;;
           esac
-          echo "${{ matrix.provider }}: run=$(grep -c run= "$GITHUB_OUTPUT" || true)"
+          if [ -n "$key" ]; then echo "run=true" >> "$GITHUB_OUTPUT"; else echo "run=false" >> "$GITHUB_OUTPUT"; fi
+          echo "${{ matrix.provider }} key configured: ${key:+yes}${key:-no}"
 
       - name: Set up JDK 25
         if: steps.gate.outputs.run == 'true'
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "25"
@@ -90,7 +95,7 @@ jobs:
 
       - name: Set up Chrome
         if: steps.gate.outputs.run == 'true'
-        uses: browser-actions/setup-chrome@v1
+        uses: browser-actions/setup-chrome@v2
         with:
           chrome-version: stable
 
@@ -107,4 +112,3 @@ jobs:
           mvn -B test -Dtest=SelfHealingDemoTest
           -Dheadless=true
           -Dtamash.provider=${{ matrix.provider }}
-          -Dsurefire.rerunFailingTestsCount=2
