@@ -35,11 +35,18 @@ class SelfHealingDemoTest {
     BrokenAddEmployeePage page = new BrokenAddEmployeePage(driver);
     page.enterName("Healed", "Employee");
 
-    // The broken locators resolved to the actual inputs — the typed values landed there.
+    // The locators resolved to the actual inputs — the typed values landed there. True whether
+    // the locators were healed at runtime or already rewritten by `apply-heals` (the state
+    // `verify-heals.sh` re-runs this in, with HEALER_ENABLED=false).
     assertEquals("Healed", page.realFieldValue("firstName"));
     assertEquals("Employee", page.realFieldValue("lastName"));
 
     page.save();
+
+    if (!Healer.isHealingEnabled()) {
+      System.out.println("[demo] healing disabled — the locators stood on their own, no heal to assert");
+      return;
+    }
 
     List<SelfHealingReport> healed = Healer.getHealingReports().stream()
         .filter(SelfHealingReport::isHealed)

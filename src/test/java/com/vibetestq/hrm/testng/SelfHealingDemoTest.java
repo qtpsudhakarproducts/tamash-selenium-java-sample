@@ -28,6 +28,11 @@ public class SelfHealingDemoTest extends BaseTest {
 
     page.save();
 
+    if (!Healer.isHealingEnabled()) {
+      System.out.println("[demo] healing disabled — the locators stood on their own, no heal to assert");
+      return;
+    }
+
     List<SelfHealingReport> healed = Healer.getHealingReports().stream()
         .filter(SelfHealingReport::isHealed)
         .toList();

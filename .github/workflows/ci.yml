@@ -113,3 +113,105 @@ jobs:
           -Dheadless=true
           -Dtamash.provider=${{ matrix.provider }}
           -Dsurefire.rerunFailingTestsCount=1
+
+  # ---- ollama: same gate as `tamash`, but the API-key provider (informational) --------
+  ollama:
+    name: Heal demo (ollama)
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Check for API key
+        id: gate
+        env:
+          OLLAMA_API_KEY: ${{ secrets.OLLAMA_API_KEY }}
+        run: |
+          if [ -n "$OLLAMA_API_KEY" ]; then echo "run=true" >> "$GITHUB_OUTPUT"; else echo "run=false" >> "$GITHUB_OUTPUT"; fi
+
+      - name: Set up JDK 21
+        if: steps.gate.outputs.run == 'true'
+        uses: actions/setup-java@v5
+        with: { distribution: temurin, java-version: "21", cache: maven }
+
+      - name: Set up Chrome
+        if: steps.gate.outputs.run == 'true'
+        uses: browser-actions/setup-chrome@v2
+        with: { chrome-version: stable }
+
+      - name: Heal the demo via ollama
+        if: steps.gate.outputs.run == 'true'
+        env:
+          OLLAMA_API_KEY: ${{ secrets.OLLAMA_API_KEY }}
+          OLLAMA_MODEL: ${{ vars.OLLAMA_MODEL || 'gpt-oss:120b' }}
+        run: >-
+          mvn -B test -Dtest=SelfHealingDemoTest
+          -Dheadless=true -Dtamash.provider=ollama
+          -Dsurefire.rerunFailingTestsCount=1
+
+  # ---- apply-heals: the full round trip --------------------------------------
+  # Heal the demo, rewrite the broken locators into source, and prove the rewrite stands alone
+  # with healing OFF. This sample's only broken locators ARE the demo (deliberately), so there's
+  # nothing to land — the job's job is to prove heal -> apply -> verify works end to end in CI.
+  # The rewrite + report are uploaded as an artifact; the checkout is never committed.
+  apply-heals:
+    name: apply-heals round trip
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Check for API key
+        id: gate
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [ -n "$ANTHROPIC_API_KEY" ]; then echo "run=true" >> "$GITHUB_OUTPUT"; else echo "run=false" >> "$GITHUB_OUTPUT"; fi
+
+      - name: Set up JDK 21
+        if: steps.gate.outputs.run == 'true'
+        uses: actions/setup-java@v5
+        with: { distribution: temurin, java-version: "21", cache: maven }
+
+      - name: Set up Chrome
+        if: steps.gate.outputs.run == 'true'
+        uses: browser-actions/setup-chrome@v2
+        with: { chrome-version: stable }
+
+      - name: Heal the demo (records .tamash-selenium/heals.jsonl)
+        if: steps.gate.outputs.run == 'true'
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ANTHROPIC_MODEL: ${{ vars.ANTHROPIC_MODEL || 'claude-haiku-4-5' }}
+        run: >-
+          mvn -B test -Dtest=com.vibetestq.hrm.junit5.SelfHealingDemoTest
+          -Dheadless=true -Dtamash.provider=anthropic
+          -Dsurefire.rerunFailingTestsCount=1
+
+      - name: apply-heals --yes
+        if: steps.gate.outputs.run == 'true'
+        run: mvn -B -q exec:java -Dexec.args="apply-heals --yes"
+
+      - name: verify-heals (rewritten locators must stand alone with healing OFF)
+        if: steps.gate.outputs.run == 'true'
+        run: |
+          if [ -f .tamash-selenium/verify-heals.sh ]; then
+            HEADLESS=true sh .tamash-selenium/verify-heals.sh
+          else
+            mvn -B test -DHEALER_ENABLED=false -Dheadless=true \
+              -Dtest=com.vibetestq.hrm.junit5.SelfHealingDemoTest
+          fi
+
+      - name: Show the rewrite
+        if: steps.gate.outputs.run == 'true'
+        run: git --no-pager diff
+
+      - name: Upload the apply-heals report + diff
+        if: steps.gate.outputs.run == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: apply-heals
+          path: |
+            .tamash-selenium/apply-heals-report.*
+            .tamash-selenium/heals.jsonl
+          if-no-files-found: warn
