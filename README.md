@@ -93,12 +93,14 @@ the same durable selectors (`By.name("firstName")`, `By.name("lastName")`, the r
 | `ollama` | gpt-oss:120b | ✓ | ~4.2k |
 | `openai` | gpt-4o-mini | ✓ | ~4.0k |
 | `anthropic` | claude-haiku-4-5 | ✓ | ~4.5k |
-| `gemini` | gemini-3.6-flash | ✓ | ~5.5k |
+| `gemini` | gemini-flash-lite-latest | ✓ | ~5.5k |
 | `claude-subscription` | claude-haiku-4-5 (OAuth, no key) | ✓ | ~4.5k |
 | `copilot-subscription` | Copilot CLI default (no key) | ✓ | ~0.45k |
 
-Note: `gemini-2.0-flash` / `gemini-2.5-flash` are retired by Google — use `gemini-3.6-flash` (or
-whatever `https://ai.google.dev/gemini-api/docs/models` lists).
+Note: use a **`-flash-lite`** Gemini model. A full `-flash` model (e.g. `gemini-3.6-flash`) thinks
+by default and takes 15–35 s for a 5k-token selector lookup — it times out. `-flash-lite` returns
+in ~2 s. tamash-selenium sends `reasoning_effort: low` on the Gemini surface either way;
+`GEMINI_THINKING=on` restores the model default.
 
 ### Single module, on purpose
 
