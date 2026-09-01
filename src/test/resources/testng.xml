@@ -2,7 +2,12 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
 <suite name="tamash-selenium HRM examples (TestNG)" verbose="1">
 
-  <!-- No <listeners> block: TamashSeleniumTestNgListener auto-registers via ServiceLoader. -->
+  <!-- TamashSeleniumTestNgListener auto-registers via ServiceLoader — it does NOT need to be here.
+       RetryListener does: it attaches a one-retry analyzer to every @Test so a single flaky
+       failure against the live, free-tier app doesn't fail the build. -->
+  <listeners>
+    <listener class-name="com.vibetestq.hrm.testng.support.RetryListener"/>
+  </listeners>
 
   <test name="All examples">
     <classes>

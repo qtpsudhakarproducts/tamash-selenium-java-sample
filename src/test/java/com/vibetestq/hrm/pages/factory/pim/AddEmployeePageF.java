@@ -50,7 +50,7 @@ public class AddEmployeePageF {
   public boolean isSaved() {
     By toast = By.cssSelector(".oxd-toast");
     By header = By.xpath("//h6[normalize-space()='Personal Details']");
-    long deadline = System.currentTimeMillis() + 30_000;
+    long deadline = System.currentTimeMillis() + 45_000;   // free-tier OrangeHRM can be slow post-Save
     while (System.currentTimeMillis() < deadline) {
       if (!driver.findElements(toast).isEmpty() || !driver.findElements(header).isEmpty()) {
         return true;

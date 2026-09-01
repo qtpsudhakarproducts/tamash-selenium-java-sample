@@ -37,9 +37,10 @@ public class AddEmployeePage extends BasePage {
     return this;
   }
 
-  /** True once the save landed — the "Successfully Saved" toast, or the Personal Details tab. */
+  /** True once the save landed — the "Successfully Saved" toast, or the Personal Details tab.
+   *  45s: the free-tier OrangeHRM instance can be slow to navigate after Save. */
   public boolean isSaved() {
-    return waitForAnyPresent(30, successToast, personalDetailsHeader);
+    return waitForAnyPresent(45, successToast, personalDetailsHeader);
   }
 
   public String toastMessage() {
