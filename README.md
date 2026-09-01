@@ -3,9 +3,13 @@
 [![CI](https://github.com/qtpsudhakarproducts/tamash-selenium-java-sample/actions/workflows/ci.yml/badge.svg)](https://github.com/qtpsudhakarproducts/tamash-selenium-java-sample/actions/workflows/ci.yml)
 
 Worked examples of [**tamash-selenium**](https://github.com/qtpsudhakarproducts/tamash-selenium)
-([Maven Central](https://central.sonatype.com/artifact/com.vibetestq.qtpsudhakar/tamash-selenium)) —
+([docs](https://qtpsudhakarproducts.github.io/tamash-selenium/) ·
+[Maven Central](https://central.sonatype.com/artifact/com.vibetestq.qtpsudhakar/tamash-selenium)) —
 self-healing for Selenium Java — in every common test style, run against the live OrangeHRM instance
 at **https://qtpsudhakar-vibetestq-hrm.up.railway.app/**.
+
+New here? Start with the **[full guide](https://qtpsudhakarproducts.github.io/tamash-selenium/guide.html)** —
+this repo is the "see it wired into a real framework" companion to it.
 
 | Style | Where |
 |---|---|
@@ -78,6 +82,11 @@ mvn test -Dtest=SelfHealingDemoTest -Dtamash.provider=claude-subscription
 ```
 
 ### Last verified green against the live app
+
+Every push runs the full matrix in [GitHub Actions](https://github.com/qtpsudhakarproducts/tamash-selenium-java-sample/actions):
+`tamash` (JUnit 5 + Cucumber, and TestNG), the heal demo through `openai` / `anthropic` / `gemini` /
+`ollama`, and an **`apply-heals` round-trip** job (heal → rewrite the broken locators into source →
+re-verify with healing off).
 
 | Command | Result |
 |---|---|
