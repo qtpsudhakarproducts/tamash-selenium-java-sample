@@ -2,7 +2,7 @@ package com.vibetestq.hrm.junit5;
 
 import com.vibetestq.hrm.pages.factory.LoginPageF;
 import com.vibetestq.hrm.pages.factory.pim.AddEmployeePageF;
-import io.github.qtpsudhakarproducts.tamash.junit.UseTamashSelenium;
+import com.vibetestq.qtpsudhakar.tamash.junit.UseTamashSelenium;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebDriver;

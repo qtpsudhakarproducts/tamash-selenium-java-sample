@@ -1,6 +1,6 @@
 package com.vibetestq.hrm.cucumber.stepdefs;
 
-import io.github.qtpsudhakarproducts.tamash.cucumber.TamashSeleniumScenario;
+import com.vibetestq.qtpsudhakar.tamash.cucumber.TamashSeleniumScenario;
 import org.openqa.selenium.WebDriver;
 
 /**

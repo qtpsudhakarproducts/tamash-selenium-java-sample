@@ -3,7 +3,7 @@
 [![CI](https://github.com/qtpsudhakarproducts/tamash-selenium-java-sample/actions/workflows/ci.yml/badge.svg)](https://github.com/qtpsudhakarproducts/tamash-selenium-java-sample/actions/workflows/ci.yml)
 
 Worked examples of [**tamash-selenium**](https://github.com/qtpsudhakarproducts/tamash-selenium)
-([Maven Central](https://central.sonatype.com/artifact/io.github.qtpsudhakarproducts/tamash-selenium)) —
+([Maven Central](https://central.sonatype.com/artifact/com.vibetestq.qtpsudhakar/tamash-selenium)) —
 self-healing for Selenium Java — in every common test style, run against the live OrangeHRM instance
 at **https://qtpsudhakar-vibetestq-hrm.up.railway.app/**.
 
@@ -11,7 +11,7 @@ at **https://qtpsudhakar-vibetestq-hrm.up.railway.app/**.
 |---|---|
 | **JUnit 5** (`@UseTamashSelenium` extension) | [`src/test/java/com/vibetestq/hrm/junit5/`](src/test/java/com/vibetestq/hrm/junit5) |
 | **TestNG** (`TamashSeleniumTestNgTest` base class) | [`src/test/java/com/vibetestq/hrm/testng/`](src/test/java/com/vibetestq/hrm/testng) |
-| **Cucumber BDD** (`io.github.qtpsudhakarproducts.tamash.cucumber` glue) | [`src/test/java/com/vibetestq/hrm/cucumber/`](src/test/java/com/vibetestq/hrm/cucumber) + [`src/test/resources/features/`](src/test/resources/features) |
+| **Cucumber BDD** (`com.vibetestq.qtpsudhakar.tamash.cucumber` glue) | [`src/test/java/com/vibetestq/hrm/cucumber/`](src/test/java/com/vibetestq/hrm/cucumber) + [`src/test/resources/features/`](src/test/resources/features) |
 | **Page Object Model** (plain `By` fields) | [`pages/pom/`](src/test/java/com/vibetestq/hrm/pages/pom) |
 | **PageFactory / `@FindBy`** (`TamashPageFactory.initElements`) | [`pages/factory/`](src/test/java/com/vibetestq/hrm/pages/factory) |
 | **Keyword-driven** (`WebUtil` + `Tamash.hint`) | [`keyword/`](src/test/java/com/vibetestq/hrm/keyword), [`testng/KeywordDrivenTest`](src/test/java/com/vibetestq/hrm/testng/KeywordDrivenTest.java) |

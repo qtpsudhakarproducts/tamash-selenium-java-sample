@@ -2,9 +2,9 @@ package com.vibetestq.hrm.junit5;
 
 import com.vibetestq.hrm.pages.broken.BrokenAddEmployeePage;
 import com.vibetestq.hrm.pages.pom.LoginPage;
-import io.github.qtpsudhakarproducts.tamash.healer.Healer;
-import io.github.qtpsudhakarproducts.tamash.healer.SelfHealingReport;
-import io.github.qtpsudhakarproducts.tamash.junit.UseTamashSelenium;
+import com.vibetestq.qtpsudhakar.tamash.healer.Healer;
+import com.vibetestq.qtpsudhakar.tamash.healer.SelfHealingReport;
+import com.vibetestq.qtpsudhakar.tamash.junit.UseTamashSelenium;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebDriver;

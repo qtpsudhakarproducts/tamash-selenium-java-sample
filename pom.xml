@@ -47,7 +47,7 @@
 
   <dependencies>
     <dependency>
-      <groupId>io.github.qtpsudhakarproducts</groupId>
+      <groupId>com.vibetestq.qtpsudhakar</groupId>
       <artifactId>tamash-selenium</artifactId>
       <version>${tamash-selenium.version}</version>
     </dependency>
@@ -147,7 +147,7 @@
         <version>3.5.0</version>
         <!-- tamash-selenium CLIs, e.g.  mvn exec:java -Dexec.args="doctor" -->
         <configuration>
-          <mainClass>io.github.qtpsudhakarproducts.tamash.cli.Main</mainClass>
+          <mainClass>com.vibetestq.qtpsudhakar.tamash.cli.Main</mainClass>
           <classpathScope>test</classpathScope>
         </configuration>
       </plugin>

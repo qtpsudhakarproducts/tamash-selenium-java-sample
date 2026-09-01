@@ -1,6 +1,6 @@
 package com.vibetestq.hrm.keyword;
 
-import io.github.qtpsudhakarproducts.tamash.Tamash;
+import com.vibetestq.qtpsudhakar.tamash.Tamash;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;

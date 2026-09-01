@@ -6,8 +6,8 @@ import com.vibetestq.hrm.pages.factory.LoginPageF;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import io.github.qtpsudhakarproducts.tamash.healer.Healer;
-import io.github.qtpsudhakarproducts.tamash.healer.SelfHealingReport;
+import com.vibetestq.qtpsudhakar.tamash.healer.Healer;
+import com.vibetestq.qtpsudhakar.tamash.healer.SelfHealingReport;
 
 import java.util.List;
 

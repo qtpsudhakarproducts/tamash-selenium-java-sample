@@ -1,7 +1,7 @@
 package com.vibetestq.hrm.pages.factory;
 
 import com.vibetestq.hrm.config.AppConfig;
-import io.github.qtpsudhakarproducts.tamash.pagefactory.TamashPageFactory;
+import com.vibetestq.qtpsudhakar.tamash.pagefactory.TamashPageFactory;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;

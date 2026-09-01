@@ -11,7 +11,7 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
 /**
  * Cucumber runner (JUnit Platform).
  *
- * <p>The glue path includes {@code io.github.qtpsudhakarproducts.tamash.cucumber} — that package's
+ * <p>The glue path includes {@code com.vibetestq.qtpsudhakar.tamash.cucumber} — that package's
  * hooks launch a self-healing {@link org.openqa.selenium.WebDriver} per scenario (read it with
  * {@code TamashSeleniumScenario.driver()}), attach heals to the scenario, and drive
  * {@code apply-heals} tracking + the HTML step report.
@@ -21,7 +21,7 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
 @SelectClasspathResource("features")
 @ConfigurationParameter(
     key = GLUE_PROPERTY_NAME,
-    value = "com.vibetestq.hrm.cucumber.stepdefs,io.github.qtpsudhakarproducts.tamash.cucumber")
+    value = "com.vibetestq.hrm.cucumber.stepdefs,com.vibetestq.qtpsudhakar.tamash.cucumber")
 @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty, summary")
 public class RunCucumberTest {
 }

@@ -2,7 +2,7 @@ package com.vibetestq.hrm.testng;
 
 import com.vibetestq.hrm.pages.pom.DashboardPage;
 import com.vibetestq.hrm.pages.pom.LoginPage;
-import io.github.qtpsudhakarproducts.tamash.testng.TamashSeleniumTestNgTest;
+import com.vibetestq.qtpsudhakar.tamash.testng.TamashSeleniumTestNgTest;
 
 /**
  * TestNG base class. {@link TamashSeleniumTestNgTest} runs the whole driver lifecycle — a fresh

@@ -1,7 +1,7 @@
 package com.vibetestq.hrm.junit5;
 
 import com.vibetestq.hrm.pages.pom.LoginPage;
-import io.github.qtpsudhakarproducts.tamash.junit.UseTamashSelenium;
+import com.vibetestq.qtpsudhakar.tamash.junit.UseTamashSelenium;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;

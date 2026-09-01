@@ -2,9 +2,9 @@ package com.vibetestq.hrm.testng;
 
 import com.vibetestq.hrm.config.AppConfig;
 import com.vibetestq.hrm.keyword.WebUtil;
-import io.github.qtpsudhakarproducts.tamash.Tamash;
-import io.github.qtpsudhakarproducts.tamash.healer.Healer;
-import io.github.qtpsudhakarproducts.tamash.healer.SelfHealingReport;
+import com.vibetestq.qtpsudhakar.tamash.Tamash;
+import com.vibetestq.qtpsudhakar.tamash.healer.Healer;
+import com.vibetestq.qtpsudhakar.tamash.healer.SelfHealingReport;
 import org.openqa.selenium.By;
 import org.testng.annotations.Test;
 

@@ -1,6 +1,6 @@
 package com.vibetestq.hrm.config;
 
-import io.github.qtpsudhakarproducts.tamash.SelfHealingDriver;
+import com.vibetestq.qtpsudhakar.tamash.SelfHealingDriver;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeOptions;

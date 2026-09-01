@@ -1,8 +1,8 @@
 package com.vibetestq.hrm.testng;
 
 import com.vibetestq.hrm.pages.broken.BrokenAddEmployeePage;
-import io.github.qtpsudhakarproducts.tamash.healer.Healer;
-import io.github.qtpsudhakarproducts.tamash.healer.SelfHealingReport;
+import com.vibetestq.qtpsudhakar.tamash.healer.Healer;
+import com.vibetestq.qtpsudhakar.tamash.healer.SelfHealingReport;
 import org.testng.annotations.Test;
 
 import java.util.List;
