@@ -61,6 +61,12 @@ public class BrokenAddEmployeePage {
     return this;
   }
 
+  /** The value now in a form field, read via its real (correct) locator — proves the broken
+   *  locator healed to the actual input, not just to "some element". */
+  public String realFieldValue(String realName) {
+    return driver.findElement(By.name(realName)).getAttribute("value");
+  }
+
   /** True once the save landed — the "Successfully Saved" toast, or navigation to the
    *  employee's Personal Details tab. Polled with findElements (never healed). */
   public boolean isSaved() {

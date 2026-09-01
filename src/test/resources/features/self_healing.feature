@@ -6,4 +6,4 @@ Feature: Self-healing locators
   Scenario: Broken locators are healed during the run
     Given I am on the Add Employee form as an administrator
     When I fill the form using stale locators for "Self" "Healing"
-    Then the employee is still saved via self-healing
+    Then every stale locator was healed at runtime

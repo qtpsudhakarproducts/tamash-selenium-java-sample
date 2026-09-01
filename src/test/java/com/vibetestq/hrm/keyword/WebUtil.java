@@ -61,6 +61,15 @@ public class WebUtil {
     return wait.until(ExpectedConditions.visibilityOfElementLocated(locator)).getText().trim();
   }
 
+  /** Current {@code value} attribute of an input. */
+  public String value(By locator) {
+    return wait.until(ExpectedConditions.visibilityOfElementLocated(locator)).getAttribute("value");
+  }
+
+  public WebElement waitVisible(By locator) {
+    return wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+  }
+
   public boolean isPresent(By locator) {
     // findElements never heals — the right call for a genuine "is it absent?" check.
     return !driver.findElements(locator).isEmpty();

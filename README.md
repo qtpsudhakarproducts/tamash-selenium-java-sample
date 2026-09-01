@@ -137,6 +137,10 @@ shows:
 Run it with **`-DHEALER_ENABLED=false`** and it fails at the first field — healing recovers a locator
 that moved, it never masks one that is genuinely gone.
 
+The test asserts on the **healing** — each broken locator recovered to the right durable selector
+and resolved to the real input (the typed value landed there). Whether OrangeHRM then persists the
+record is a property of that free-tier demo app (sometimes slow), so it's only logged.
+
 ## Landing the fixes: `apply-heals`
 
 After a run that healed something:

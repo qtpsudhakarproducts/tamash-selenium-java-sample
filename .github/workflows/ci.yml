@@ -112,3 +112,4 @@ jobs:
           mvn -B test -Dtest=SelfHealingDemoTest
           -Dheadless=true
           -Dtamash.provider=${{ matrix.provider }}
+          -Dsurefire.rerunFailingTestsCount=1
