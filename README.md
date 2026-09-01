@@ -21,7 +21,7 @@ at **https://qtpsudhakar-vibetestq-hrm.up.railway.app/**.
 
 ## Requirements
 
-- **JDK 25+** — `tamash-selenium` ships Java 25 bytecode, so the runtime JVM must be 25 or newer.
+- **JDK 21+**
 - Maven 3.9+
 - Chrome / Firefox / Edge installed (Selenium Manager fetches the driver binary automatically).
 
@@ -97,11 +97,8 @@ the same durable selectors (`By.name("firstName")`, `By.name("lastName")`, the r
 | `claude-subscription` | claude-haiku-4-5 (OAuth, no key) | ✓ | ~4.5k |
 | `copilot-subscription` | Copilot CLI default (no key) | ✓ | ~0.45k |
 
-Notes: `gemini-2.0-flash` / `gemini-2.5-flash` are retired by Google — use `gemini-3.6-flash` (or
-whatever `https://ai.google.dev/gemini-api/docs/models` lists). On OrangeHRM's slow post-save
-transition the `//h6[Personal Details]` check sometimes falls through text → **vision** and returns
-a `visual match … [needsReview=yes, assertion=yes]` — a correctly-flagged one-shot heal, not a
-durable one.
+Note: `gemini-2.0-flash` / `gemini-2.5-flash` are retired by Google — use `gemini-3.6-flash` (or
+whatever `https://ai.google.dev/gemini-api/docs/models` lists).
 
 ### Single module, on purpose
 
